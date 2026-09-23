@@ -1,0 +1,74 @@
+# untracked directories
+external/*
+libs/*
+logs/*
+build
+data
+benchmarks/*
+**/.DS_Store
+.vscode
+
+# untracked directories for gensim experiments
+gensim_experiments/libs/*
+gensim_experiments/logs/*
+gensim_experiments/build
+gensim_experiments/data
+gensim_experiments/extras/mallet
+gensim_experiments/extras/lda_preprocess/build
+gensim_experiments/extras/lda_preprocess/data
+gensim_experiments/external/*
+gensim_experiments/benchmarks/*
+gensim_experiments/**/.DS_Store
+
+# untracked dirs in lda_preprocess
+extras/lda_preprocess/build
+extras/lda_preprocess/data
+extras/mallet
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+.vscode
+install-tl-20241217/
+install-tl-20241213/
+CMakeFiles/
+scripts/.ninja_deps
+perf.svg
+cripts/.ninja_deps
+scripts/.ninja_log
+scripts/gammapdb_arrow
+scripts/output.txt
+scripts/run_all_tests
+scripts/collapsingConstraint_easyWay.py
+scripts/outputt.txt
+scripts/install-tl-20250331/
+scripts/temp2.sh

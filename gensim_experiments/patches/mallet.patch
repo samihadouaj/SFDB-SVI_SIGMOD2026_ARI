@@ -1,0 +1,22 @@
+diff --git a/src/cc/mallet/topics/ParallelTopicModel.java b/src/cc/mallet/topics/ParallelTopicModel.java
+index c899507..28059ed 100644
+--- a/src/cc/mallet/topics/ParallelTopicModel.java
++++ b/src/cc/mallet/topics/ParallelTopicModel.java
+@@ -642,7 +642,7 @@ public class ParallelTopicModel implements Serializable {
+     }
+ 
+     public void estimate () throws IOException {
+-
++        System.out.println("vocab size: "+numTypes);
+         long startTime = System.currentTimeMillis();
+ 
+         WorkerCallable[] callables = new WorkerCallable[numThreads];
+@@ -825,7 +825,7 @@ public class ParallelTopicModel implements Serializable {
+                 }
+                 
+             }
+-
++            System.out.println("#### "+iteration+"," + (System.currentTimeMillis() - iterationStart));
+             long elapsedMillis = System.currentTimeMillis() - iterationStart;
+             if (elapsedMillis < 1000) {
+                 logger.fine(elapsedMillis + "ms ");

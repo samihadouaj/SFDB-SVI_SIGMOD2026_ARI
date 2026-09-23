@@ -1,0 +1,125 @@
+\documentclass{article}
+
+
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\usetikzlibrary{arrows}
+\renewcommand{\textcolor}[2]{#2}
+
+
+\begin{document}
+
+%  ###### SINGLE THREADED EXPERIMENTS ######
+
+\begin{figure*}[t]
+    %\centering
+    %\begin{center}
+    \begin{subfigure}[b]{0.3\textwidth}
+        %\centering
+        \begin{tikzpicture}[scale=0.65]
+            \begin{axis}[width=2\textwidth,
+                         xmode=log, 
+                         xlabel={${\large\textsf{time [ms]}}$}, 
+                         ylabel={${\large\textsf{perplexity [nat]}}$}]
+                \addplot [color=blue, mark=o] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_train_20topics_A0.2_B0.1_NI20_NT1_RND123_gammapdb_lda-inmemory-vrexpr_plotdata.csv};
+
+                 \addplot [color=orange, mark=diamond] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_train_20topics_A0.2_B0.1_NI20_NT1_RND123_Mallet_plotdata.csv};
+
+
+                  \addplot [color=black, mark=+] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_train_20topics_A0.2_B0.1_NI20_NT1_RND123_gensim_plotdata.csv};
+
+
+                  %\addplot [color=green, mark=square] table [x index = {0}, y index = {1}, col sep=comma] {csv/NYTIMES_train_SCVI_plotdata_20_topics.csv};
+            
+                \legend{$\textsf{$\star$fishDB}$ , $\textsf{Mallet}$, $\textsf{Gensim}$}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{$\textsf{Train-set NYTIMES }$}
+        \label{fig:nytrain20}
+    \end{subfigure}%
+    \hspace{22mm} 
+    \begin{subfigure}[b]{0.3\textwidth}
+       %\centering
+       \begin{tikzpicture}[scale=0.65]
+            \begin{axis}[width=2\textwidth,
+                         xmode=log, 
+                         xlabel={${\large\textsf{time [ms]}}$}, 
+                         ylabel={${\large\textsf{perplexity [nat]}}$}]
+                \addplot [color=blue, mark=o] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_test_20topics_A0.2_B0.1_NI20_NT1_RND123_gammapdb_lda-inmemory-vrexpr_plotdata.csv};
+                \addplot [color=orange, mark=diamond] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_test_20topics_A0.2_B0.1_NI20_NT1_RND123_Mallet_plotdata.csv};
+                \addplot [color=black, mark=+] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/NYTIMES_test_20topics_A0.2_B0.1_NI20_NT1_RND123_gensim_plotdata.csv};
+                %\addplot [color=green, mark=square] table [x index = {0}, y index = {1}, col sep=comma] {csv/NYTIMES_test_SCVI_plotdata_20_topics.csv};
+        
+                %\legend{$\textsf{$\star$fishDB}$ , $\textsf{Mallet}$, $\textsf{Gensim}$}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{$\textsf{Test-set NYTIMES}$}
+        \label{fig:nytest20}
+    \end{subfigure}% 
+    \hspace{16mm}
+    \caption{LDA single threaded benchmarking on NYTIMES using 20 topics}
+    \label{fig:lda_bench_20_a}
+    %\end{center} 
+\end{figure*}
+%
+%
+%
+%
+\begin{figure*}[t]
+    \centering
+    %\hspace{22mm}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.65]
+            \begin{axis}[width=2\textwidth,
+                         xmode=log, 
+                         xlabel={${\large\textsf{time [ms]}}$}, 
+                         ylabel={${\large\textsf{perplexity [nat]}}$},legend pos=south west]]
+
+
+                  \addplot [color=blue, mark=o] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_train_20topics_A0.2_B0.1_NI20_NT1_RND123_gammapdb_lda-inmemory-vrexpr_plotdata.csv};
+
+                 \addplot [color=orange, mark=diamond] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_train_20topics_A0.2_B0.1_NI20_NT1_RND123_Mallet_plotdata.csv};
+
+
+                  \addplot [color=black, mark=+] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_train_20topics_A0.2_B0.1_NI20_NT1_RND123_gensim_plotdata.csv};
+            
+                %\legend{$\textsf{$\star$fishDB}$ , $\textsf{Mallet}$, $\textsf{Gensim}$}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{$\textsf{Train-Set PUBMED}$}
+        \label{fig:pubmedtrain20}
+    \end{subfigure}%
+    \hspace{22mm}
+        \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+       \begin{tikzpicture}[scale=0.65]
+            \begin{axis}[width=2\textwidth,
+                         xmode=log, 
+                         xlabel={${\large\textsf{time [ms]}}$}, 
+                         ylabel={${\large\textsf{perplexity [nat]}}$}]
+                \addplot [color=blue, mark=o] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_test_20topics_A0.2_B0.1_NI20_NT1_RND123_gammapdb_lda-inmemory-vrexpr_plotdata.csv};
+                \addplot [color=orange, mark=diamond] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_test_20topics_A0.2_B0.1_NI20_NT1_RND123_Mallet_plotdata.csv};
+                \addplot [color=black, mark=+] table [x index = {0}, y index = {1}, col sep=comma] {../benchmarks/csv/PUBMED_test_20topics_A0.2_B0.1_NI20_NT1_RND123_gensim_plotdata.csv};
+                % \addplot [color=green, mark=o] table [x index = {0}, y index = {1}, col sep=comma] {csv/PUBMED_test_SCVI_plotdata_20_topics.csv};
+        
+                %\legend{$\textsf{$\star$fishDB}$ , $\textsf{Mallet}$, $\textsf{Gensim}$}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{$\textsf{Test-Set PUBMED}$}
+        \label{fig:pubmedtest20}
+    \end{subfigure}%
+    \hspace{16mm}
+    %\caption{LDA single threaded benchmarking on NYTIMES and PUBMED using 20 topics}
+    \caption{LDA single threaded benchmarking on PUBMED using 20 topics}
+    \label{fig:lda_bench_20_b}
+\end{figure*}
+
+
+
+\end{document}
+\endinput

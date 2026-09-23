@@ -1,0 +1,10 @@
+# Use this file to relocate the <root>/data directory
+# somewhere outside of the project's source tree.
+#
+# For example: 
+#
+#/scratch/lda_datasets_202303
+
+
+
+

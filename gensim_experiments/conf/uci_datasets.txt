@@ -1,0 +1,10 @@
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/docword.enron.txt.gz
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/docword.kos.txt.gz
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/docword.nips.txt.gz
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/docword.nytimes.txt.gz
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/docword.pubmed.txt.gz
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/vocab.enron.txt
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/vocab.kos.txt
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/vocab.nips.txt
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/vocab.nytimes.txt
+https://archive.ics.uci.edu/ml/machine-learning-databases/bag-of-words/vocab.pubmed.txt
