@@ -72,3 +72,12 @@ scripts/collapsingConstraint_easyWay.py
 scripts/outputt.txt
 scripts/install-tl-20250331/
 scripts/temp2.sh
+# Python bytecode caches
+__pycache__/
+*.pyc
+
+# TeX Live installers
+install-tl-*/
+
+# Generated tables (report/make_latex_table.py)
+report/loglik_tables.*

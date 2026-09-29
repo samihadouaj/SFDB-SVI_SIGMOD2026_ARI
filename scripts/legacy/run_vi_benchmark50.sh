@@ -32,7 +32,7 @@ echo "----------------------------- $(date) -----------------------------" >> ${
 
 # NUM_TOPICS=20
 # ALPHA_PRIOR=0.1
-# BETA_PRIOR=0.1
+# BETA_PRIOR=0.01
 # NUM_ITERATIONS=30
 # #NUM_ITERATIONS=12
 # #NUM_RUNS=3
@@ -48,57 +48,57 @@ echo "----------------------------- $(date) -----------------------------" >> ${
 
 
 
-# ########################################################
-# ############### KOS  ###################################
-# ########################################################
+########################################################
+############### KOS  ###################################
+########################################################
 
-# ALPHA_PRIOR=0.2
-# BETA_PRIOR=0.1
-# NUM_ITERATIONS=30
-# NUM_RUNS=1
-# SAVE_EVERY=3
-# RND_SEED=123
-# PARALLEL_PERP_COMP=TRUE
-# BATCH_SIZE=40000  # Adjust or uncomment your preferred BATCH_SIZE
-# VI_ITER_PER_BATCH=4
+ALPHA_PRIOR=0.2
+BETA_PRIOR=0.1
+NUM_ITERATIONS=30
+NUM_RUNS=1
+SAVE_EVERY=3
+RND_SEED=123
+PARALLEL_PERP_COMP=TRUE
+BATCH_SIZE=40000  # Adjust or uncomment your preferred BATCH_SIZE
+VI_ITER_PER_BATCH=4
 
-# # Loop over the two topic settings and the desired thread counts
-# for NUM_TOPICS in  50; do
-#   for NUM_THREADS in  8 ; do
-#     echo "Running benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
+# Loop over the two topic settings and the desired thread counts
+for NUM_TOPICS in  10; do
+  for NUM_THREADS in  8 ; do
+    echo "Running benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
 
-#     TotalStart=$(date +%s)
+    TotalStart=$(date +%s)
 
-#     start=$(date +%s)
-#     ${SCRIPTSDIR_ABS_PATH}/run_vi.sh \
-#       --datasetName KOS \
-#       --numTopics ${NUM_TOPICS} \
-#       --alpha ${ALPHA_PRIOR} \
-#       --beta ${BETA_PRIOR} \
-#       --numIterations ${NUM_ITERATIONS} \
-#       --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet \
-#       --outputDir ${BENCHMARKSDIR_ABS_PATH} \
-#       --trainingSetDir ${DATADIR_ABS_PATH}/KOS_train/mallet \
-#       --testSetDir ${DATADIR_ABS_PATH}/KOS_test/mallet  \
-#       --saveEvery ${SAVE_EVERY} \
-#       --rndSeed ${RND_SEED} \
-#       --numThreads ${NUM_THREADS} \
-#       --numRuns ${NUM_RUNS} \
-#       --PARALLEL_PERP_COMP ${PARALLEL_PERP_COMP} \
-#       --BATCH_SIZE ${BATCH_SIZE}\
-#       --VI_ITER_PER_BATCH ${VI_ITER_PER_BATCH}
+    start=$(date +%s)
+    ${SCRIPTSDIR_ABS_PATH}/run_vi.sh \
+      --datasetName KOS \
+      --numTopics ${NUM_TOPICS} \
+      --alpha ${ALPHA_PRIOR} \
+      --beta ${BETA_PRIOR} \
+      --numIterations ${NUM_ITERATIONS} \
+      --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet \
+      --outputDir ${BENCHMARKSDIR_ABS_PATH} \
+      --trainingSetDir ${DATADIR_ABS_PATH}/KOS_train/mallet \
+      --testSetDir ${DATADIR_ABS_PATH}/KOS_test/mallet  \
+      --saveEvery ${SAVE_EVERY} \
+      --rndSeed ${RND_SEED} \
+      --numThreads ${NUM_THREADS} \
+      --numRuns ${NUM_RUNS} \
+      --PARALLEL_PERP_COMP ${PARALLEL_PERP_COMP} \
+      --BATCH_SIZE ${BATCH_SIZE}\
+      --VI_ITER_PER_BATCH ${VI_ITER_PER_BATCH}
 
-#     end=$(date +%s)
-#     runtime=$((end - start))
-#     echo "Time taken for KOS_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}: $runtime seconds" \
-#       | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+    end=$(date +%s)
+    runtime=$((end - start))
+    echo "Time taken for KOS_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}: $runtime seconds" \
+      | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
 
-#     TotalEnd=$(date +%s)
-#     total_runtime=$((TotalEnd - TotalStart))
-#     echo "Total benchmark time for ${NUM_TOPICS} topics with ${NUM_THREADS} threads: ${total_runtime} seconds" \
-#       | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
-#   done
-# done
+    TotalEnd=$(date +%s)
+    total_runtime=$((TotalEnd - TotalStart))
+    echo "Total benchmark time for ${NUM_TOPICS} topics with ${NUM_THREADS} threads: ${total_runtime} seconds" \
+      | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+  done
+done
 
 
 
@@ -118,8 +118,8 @@ echo "----------------------------- $(date) -----------------------------" >> ${
 # VI_ITER_PER_BATCH=5
 
 # # Loop over the two topic settings and the desired thread counts
-# for NUM_TOPICS in  100; do
-#   for NUM_THREADS in 8 16 24  ; do
+# for NUM_TOPICS in  50; do
+#   for NUM_THREADS in 8 16 24 ; do
 #     echo "Running NYTIMES benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
     
 #     TotalStart=$(date +%s)
@@ -162,56 +162,54 @@ echo "----------------------------- $(date) -----------------------------" >> ${
 #########################################################
 
 
-# Define fixed parameters
-ALPHA_PRIOR=0.2
-BETA_PRIOR=0.1
-# Used to be 110 in previous experiment so that I have 10 points. That's what I currently have
-NUM_ITERATIONS=220
-NUM_RUNS=2
+# # Define fixed parameters
+# ALPHA_PRIOR=0.2
+# BETA_PRIOR=0.1
+# NUM_ITERATIONS=110
+# NUM_RUNS=2
 # SAVE_EVERY=11
-SAVE_EVERY=22
-RND_SEED=123
-PARALLEL_PERP_COMP=TRUE
-BATCH_SIZE=4000000  
-VI_ITER_PER_BATCH=3
+# RND_SEED=123
+# PARALLEL_PERP_COMP=TRUE
+# BATCH_SIZE=4000000  
+# VI_ITER_PER_BATCH=3
 
-# Loop over the two topic settings and the desired thread counts
-for NUM_TOPICS in  100; do
-  for NUM_THREADS in 24 ; do
-    echo "Running PUBMED benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
+# # Loop over the two topic settings and the desired thread counts
+# for NUM_TOPICS in  50; do
+#   for NUM_THREADS in 8 16 24 ; do
+#     echo "Running PUBMED benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
     
-    TotalStart=$(date +%s)
+#     TotalStart=$(date +%s)
 
-    start=$(date +%s)
-    ${SCRIPTSDIR_ABS_PATH}/run_vi.sh \
-      --datasetName PUBMED \
-      --numTopics ${NUM_TOPICS} \
-      --alpha ${ALPHA_PRIOR} \
-      --beta ${BETA_PRIOR} \
-      --numIterations ${NUM_ITERATIONS} \
-      --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet \
-      --outputDir ${BENCHMARKSDIR_ABS_PATH} \
-      --trainingSetDir ${DATADIR_ABS_PATH}/PUBMED_train/mallet \
-      --testSetDir ${DATADIR_ABS_PATH}/PUBMED_test/mallet \
-      --saveEvery ${SAVE_EVERY} \
-      --rndSeed ${RND_SEED} \
-      --numThreads ${NUM_THREADS} \
-      --numRuns ${NUM_RUNS} \
-      --PARALLEL_PERP_COMP ${PARALLEL_PERP_COMP} \
-      --BATCH_SIZE ${BATCH_SIZE}\
-      --VI_ITER_PER_BATCH ${VI_ITER_PER_BATCH}
+#     start=$(date +%s)
+#     ${SCRIPTSDIR_ABS_PATH}/run_vi.sh \
+#       --datasetName PUBMED \
+#       --numTopics ${NUM_TOPICS} \
+#       --alpha ${ALPHA_PRIOR} \
+#       --beta ${BETA_PRIOR} \
+#       --numIterations ${NUM_ITERATIONS} \
+#       --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet \
+#       --outputDir ${BENCHMARKSDIR_ABS_PATH} \
+#       --trainingSetDir ${DATADIR_ABS_PATH}/PUBMED_train/mallet \
+#       --testSetDir ${DATADIR_ABS_PATH}/PUBMED_test/mallet \
+#       --saveEvery ${SAVE_EVERY} \
+#       --rndSeed ${RND_SEED} \
+#       --numThreads ${NUM_THREADS} \
+#       --numRuns ${NUM_RUNS} \
+#       --PARALLEL_PERP_COMP ${PARALLEL_PERP_COMP} \
+#       --BATCH_SIZE ${BATCH_SIZE}\
+#       --VI_ITER_PER_BATCH ${VI_ITER_PER_BATCH}
       
-    end=$(date +%s)
-    runtime=$((end - start))
-    echo "Time taken to run lda-inmemory-vrexpr benchmark on PUBMED_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND saving every ${SAVE_EVERY} with PARALLEL_PERP_COMP=${PARALLEL_PERP_COMP} is: $runtime seconds" \
-      | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+#     end=$(date +%s)
+#     runtime=$((end - start))
+#     echo "Time taken to run lda-inmemory-vrexpr benchmark on PUBMED_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND saving every ${SAVE_EVERY} with PARALLEL_PERP_COMP=${PARALLEL_PERP_COMP} is: $runtime seconds" \
+#       | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
 
-    TotalEnd=$(date +%s)
-    total_runtime=$((TotalEnd - TotalStart))
-    echo "Total benchmarking time for PUBMED dataset with ${NUM_TOPICS} topics and ${NUM_THREADS} threads: $total_runtime seconds" \
-      | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
-  done
-done
+#     TotalEnd=$(date +%s)
+#     total_runtime=$((TotalEnd - TotalStart))
+#     echo "Total benchmarking time for PUBMED dataset with ${NUM_TOPICS} topics and ${NUM_THREADS} threads: $total_runtime seconds" \
+#       | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+#   done
+# done
 
 
 
@@ -236,8 +234,8 @@ done
 # VI_ITER_PER_BATCH=6
 
 # # Loop over the two topic settings and the desired thread counts
-# for NUM_TOPICS in  100; do
-#   for NUM_THREADS in 8 16 24  ; do
+# for NUM_TOPICS in  200; do
+#   for NUM_THREADS in 8 ; do
 #     echo "Running wiki08 benchmark for ${NUM_TOPICS} topics with ${NUM_THREADS} threads"
     
 #     TotalStart=$(date +%s)

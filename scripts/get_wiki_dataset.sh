@@ -61,6 +61,18 @@ else
    echo "Compiling <root>/extras/svi_lda_preprocess ... Nothing to do."
 fi
 
+#
+# Build the C++SVI data converter (<root>/cxx_svi/extras/lda_svi_formatting), if necessary
+#
+CXXSVI_CONVERTER=${PROJECT_ROOT_ABS_PATH}/cxx_svi/extras/lda_svi_formatting/build/ConvertDataToSVIFormat
+if [ ! -x "${CXXSVI_CONVERTER}" ]; then
+   echo "Compiling the C++SVI data converter..."
+   mkdir -p $(dirname ${CXXSVI_CONVERTER})
+   g++ -O3 -std=c++17 -o ${CXXSVI_CONVERTER} ${PROJECT_ROOT_ABS_PATH}/cxx_svi/extras/lda_svi_formatting/src/ConvertDataToSVIFormat.cpp
+else
+   echo "Compiling the C++SVI data converter... Nothing to do."
+fi
+
 
 
 
@@ -121,6 +133,23 @@ if [ ! -d "${DATADIR_ABS_PATH}/wiki08_train" ]; then
    echo "Converting the wiki dataset into svi format... Done."
 else
    echo "Converting wiki dataset into CSV2 and SVI format... Nothing to do."
+fi
+
+#
+# Convert wiki08 training set into C++SVI format, if necessary
+#
+if [ ! -f "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi.csv" ]; then
+   echo "Converting wiki08 dataset into C++SVI format..."
+   mkdir -p "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2"
+   ${CXXSVI_CONVERTER} \
+      "${DATADIR_ABS_PATH}/wiki08_train/csv2/wiki08_train.csv" \
+      "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi.csv.tmp" \
+      "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi_mapping.csv.tmp"
+   mv "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi_mapping.csv.tmp" "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi_mapping.csv"
+   mv "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi.csv.tmp" "${DATADIR_ABS_PATH}/wiki08_train/cxx_svi/csv2/wiki08_train_svi.csv"
+   echo "Converting wiki08 dataset into C++SVI format done."
+else
+   echo "Converting wiki08 dataset into C++SVI format... Nothing to do."
 fi
 
 

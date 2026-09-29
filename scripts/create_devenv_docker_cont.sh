@@ -54,7 +54,7 @@ MOUNT_OPTIONS="${PROJECT_ROOT_ABS_PATH}:/gammapdb_arrow:z"
 echo $MOUNT_OPTIONS
 echo $DOCKER_CONT_NAME
 
-docker run -v ${MOUNT_OPTIONS} --name ${DOCKER_CONT_NAME}  --detach --tty ${DOCKER_IMG_NAME} /bin/bash
+docker run --pids-limit=-1 -v ${MOUNT_OPTIONS} --name ${DOCKER_CONT_NAME}  --detach --tty ${DOCKER_IMG_NAME} /bin/bash
 
 echo "Run \"docker exec -it ${DOCKER_CONT_NAME} bash\" to access the container."
 

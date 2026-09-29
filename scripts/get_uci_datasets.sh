@@ -62,6 +62,18 @@ else
    echo "Compiling <root>/extras/svi_lda_preprocess ... Nothing to do."
 fi
 
+#
+# Build the C++SVI data converter (<root>/cxx_svi/extras/lda_svi_formatting), if necessary
+#
+CXXSVI_CONVERTER=${PROJECT_ROOT_ABS_PATH}/cxx_svi/extras/lda_svi_formatting/build/ConvertDataToSVIFormat
+if [ ! -x "${CXXSVI_CONVERTER}" ]; then
+   echo "Compiling the C++SVI data converter..."
+   mkdir -p $(dirname ${CXXSVI_CONVERTER})
+   g++ -O3 -std=c++17 -o ${CXXSVI_CONVERTER} ${PROJECT_ROOT_ABS_PATH}/cxx_svi/extras/lda_svi_formatting/src/ConvertDataToSVIFormat.cpp
+else
+   echo "Compiling the C++SVI data converter... Nothing to do."
+fi
+
 
 
 
@@ -128,6 +140,23 @@ else
 fi
 
 #
+# Convert KOS training set into C++SVI format, if necessary
+#
+if [ ! -f "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi.csv" ]; then
+   echo "Converting KOS dataset into C++SVI format..."
+   mkdir -p "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2"
+   ${CXXSVI_CONVERTER} \
+      "${DATADIR_ABS_PATH}/KOS_train/csv2/KOS_train.csv" \
+      "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi.csv.tmp" \
+      "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi_mapping.csv.tmp"
+   mv "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi_mapping.csv.tmp" "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi_mapping.csv"
+   mv "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi.csv.tmp" "${DATADIR_ABS_PATH}/KOS_train/cxx_svi/csv2/KOS_train_svi.csv"
+   echo "Converting KOS dataset into C++SVI format done."
+else
+   echo "Converting KOS dataset into C++SVI format... Nothing to do."
+fi
+
+#
 # Importing KOS dataset into Mallet, if necessary
 #
 if [ ! -f "${DATADIR_ABS_PATH}/KOS_train/mallet/training.mallet" ]; then
@@ -169,6 +198,23 @@ if [ ! -d "${DATADIR_ABS_PATH}/NYTIMES_train/csv2" ]; then
    echo "Converting NYTIMES dataset into svi format done."
 else
    echo "Converting NYTIMES dataset into CSV2 format... Nothing to do."
+fi
+
+#
+# Convert NYTIMES training set into C++SVI format, if necessary
+#
+if [ ! -f "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi.csv" ]; then
+   echo "Converting NYTIMES dataset into C++SVI format..."
+   mkdir -p "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2"
+   ${CXXSVI_CONVERTER} \
+      "${DATADIR_ABS_PATH}/NYTIMES_train/csv2/NYTIMES_train.csv" \
+      "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi.csv.tmp" \
+      "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi_mapping.csv.tmp"
+   mv "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi_mapping.csv.tmp" "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi_mapping.csv"
+   mv "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi.csv.tmp" "${DATADIR_ABS_PATH}/NYTIMES_train/cxx_svi/csv2/NYTIMES_train_svi.csv"
+   echo "Converting NYTIMES dataset into C++SVI format done."
+else
+   echo "Converting NYTIMES dataset into C++SVI format... Nothing to do."
 fi
 
 #
@@ -215,6 +261,23 @@ if [ ! -d "${DATADIR_ABS_PATH}/PUBMED_train/csv2" ]; then
    echo "Converting PUBMED dataset into svi format done."
 else
    echo "Converting PUBMED dataset into CSV2 format... Nothing to do."
+fi
+
+#
+# Convert PUBMED training set into C++SVI format, if necessary
+#
+if [ ! -f "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi.csv" ]; then
+   echo "Converting PUBMED dataset into C++SVI format..."
+   mkdir -p "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2"
+   ${CXXSVI_CONVERTER} \
+      "${DATADIR_ABS_PATH}/PUBMED_train/csv2/PUBMED_train.csv" \
+      "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi.csv.tmp" \
+      "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi_mapping.csv.tmp"
+   mv "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi_mapping.csv.tmp" "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi_mapping.csv"
+   mv "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi.csv.tmp" "${DATADIR_ABS_PATH}/PUBMED_train/cxx_svi/csv2/PUBMED_train_svi.csv"
+   echo "Converting PUBMED dataset into C++SVI format done."
+else
+   echo "Converting PUBMED dataset into C++SVI format... Nothing to do."
 fi
 
 #

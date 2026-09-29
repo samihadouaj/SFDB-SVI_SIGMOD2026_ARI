@@ -1,77 +1,47 @@
 #!/bin/bash
 
-# on failure, terminate the script immediately
-# set -e
+# Stop at the first failing step
+set -eo pipefail
 
-# Determine the script's absolute path
-SCRIPTSDIR_ABS_PATH=$(readlink -f ${BASH_SOURCE[0]})
-SCRIPTSDIR_ABS_PATH=$(dirname ${SCRIPTSDIR_ABS_PATH})
+# Paths; every step writes its log to logs/log_<script>.txt
+SCRIPTSDIR_ABS_PATH=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
+PROJECT_ROOT_ABS_PATH=$(readlink -f ${SCRIPTSDIR_ABS_PATH}/..)
+LOGS_ABS_PATH=${PROJECT_ROOT_ABS_PATH}/logs
+mkdir -p ${LOGS_ABS_PATH}
 
-# Determine the project's root path
-PROJECT_ROOT_ABS_PATH=$(readlink -f ${SCRIPTSDIR_ABS_PATH}/../)
+# Use the GCC 11 toolchain and TeX Live (installed by get_deps.sh)
+source /opt/rh/devtoolset-11/enable
+export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux
 
-# Determine commonly used directories
-EXTERNALTOOLS_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/external)
-EXTERNALLIBS_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/libs)
-PATCHESDIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/patches)
-BUILDDIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/build)
-DATADIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/data)
-CONFDIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/conf)
-EXTRASDIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/extras)
-BENCHMARKSDIR_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/benchmarks)
-REPORT_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/report)
-LOGS_ABS_PATH=$(readlink -f ${PROJECT_ROOT_ABS_PATH}/logs)
+# Run a script from scripts/ and save its output to its log file
+run() {
+  echo "==================== $1 ($(date)) ===================="
+  bash ${SCRIPTSDIR_ABS_PATH}/$1 2>&1 | tee ${LOGS_ABS_PATH}/log_${1%.sh}.txt
+}
 
+# Download and build the dependencies (LLVM ClangJIT, Apache Arrow)
+run get_deps.sh
+# Install Mallet, then download and preprocess the UCI datasets (including PubMed)
+run get_uci_datasets.sh
+# Download and preprocess the Wikipedia dataset
+run get_wiki_dataset.sh
+# Build StarfishDB and C++SVI
+run build_all.sh
 
+# PubMed, 100 topics: SFDB-SVI
+run run_pubmed_sfdb_svi.sh
+# PubMed, 100 topics: Mallet and SFDB-CGS
+run run_pubmed_mallet_cgs.sh
+# PubMed, 100 topics: C++SVI
+run run_pubmed_cxx_svi.sh
+# Wikipedia, 200 topics: SFDB-SVI
+run run_wiki_sfdb_svi.sh
+# Wikipedia, 200 topics: Mallet and SFDB-CGS
+run run_wiki_mallet_cgs.sh
+# Wikipedia, 200 topics: C++SVI
+run run_wiki_cxx_svi.sh
 
-
-
-# 1run the scripts responsible for downloading and compiling all the necessary dependencies  (approx 2 hours ):
-
-source ${SCRIPTSDIR_ABS_PATH}/get_deps.sh | tee ${LOGS_ABS_PATH}/log_get_deps.txt
-
-# run the script to download the data and preprocess them into the required format (approx 1 hours )
- 
-source ${SCRIPTSDIR_ABS_PATH}/get_uci_datasets.sh | tee ${LOGS_ABS_PATH}/log_get_uci_datasets.txt
-
-
-# compile starfishDB
-cd ${BUILDDIR_ABS_PATH} 
-
-cmake3 -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER=`readlink -f ../libs/llvm-project-cxxjit/bin`/clang -DCMAKE_CXX_COMPILER=`readlink -f ../libs/llvm-project-cxxjit/bin`/clang++ ..  | tee ${LOGS_ABS_PATH}/log_cmake3.txt
-
-ninja | tee ${LOGS_ABS_PATH}/log_ninja.txt
-
-
-
-#Run experiments
-
-#Run 20 topics experimets
-source ${SCRIPTSDIR_ABS_PATH}/run_lda_benchmarks.sh| tee ${LOGS_ABS_PATH}/log_run_lda_benchmarks.txt
-#Cleaning
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/gammapdb_data/lda-inmemory-vrexpr/chain_states/*
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/mallet_data/chain_states/*
-
-#Run 50 topics experimets
-source ${SCRIPTSDIR_ABS_PATH}/run_lda_benchmarksP50.sh| tee ${LOGS_ABS_PATH}/log_run_lda_benchmarksP50.txt
-#Cleaning
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/gammapdb_data/lda-inmemory-vrexprP/chain_states/*
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/mallet_data/chain_states/*
-
-#Run 50 topics experimets
-source ${SCRIPTSDIR_ABS_PATH}/run_lda_benchmarksP100.sh| tee ${LOGS_ABS_PATH}/log_run_lda_benchmarksP100.txt
-#Cleaning
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/gammapdb_data/lda-inmemory-vrexprP/chain_states/*
-rm -rf ${BENCHMARKSDIR_ABS_PATH}/mallet_data/chain_states/*
-
-
-# creating the reports
-
-
-# cd ${REPORT_ABS_PATH}
-
-# source ${REPORT_ABS_PATH}/create20TopicsReport.sh| tee ${LOGS_ABS_PATH}/log_create20TopicsReport.txt
-
-# source ${REPORT_ABS_PATH}/create50TopicsReport.sh| tee ${LOGS_ABS_PATH}/log_create50TopicsReport.txt
-
-# source ${REPORT_ABS_PATH}/create100TopicsReport.sh| tee ${LOGS_ABS_PATH}/log_create100TopicsReport.txt
+# Compute T1/T2 and print Table 1
+python3 ${SCRIPTSDIR_ABS_PATH}/make_loglik_table.py 2>&1 | tee ${LOGS_ABS_PATH}/log_make_loglik_table.txt
+# Write both tables as LaTeX and compile them to report/loglik_tables.pdf
+python3 ${PROJECT_ROOT_ABS_PATH}/report/make_latex_table.py 2>&1 | tee ${LOGS_ABS_PATH}/log_make_latex_table.txt

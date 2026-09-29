@@ -86,36 +86,36 @@ start=$(date +%s)
 
 
 
-TotalStart=$(date +%s)
+# TotalStart=$(date +%s)
 
-# process NYTIMES dataset with Mallet
-start=$(date +%s)
-${SCRIPTSDIR_ABS_PATH}/run_mallet.sh --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS} --ParallelPerpComp ${PARALLEL_PERP_COMP}
+# # process NYTIMES dataset with Mallet
+# start=$(date +%s)
+# ${SCRIPTSDIR_ABS_PATH}/run_mallet.sh --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS} --ParallelPerpComp ${PARALLEL_PERP_COMP}
 
-end=$(date +%s)
-runtime=$((end-start))
-echo "Time taken to run mallet benchmark on NYTIMES_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${ThNB}_RND saving every ${SAVE_EVERY}  with is ParallelPerpComp = ${PARALLEL_PERP_COMP} is: $runtime seconds"  | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
-
-
+# end=$(date +%s)
+# runtime=$((end-start))
+# echo "Time taken to run mallet benchmark on NYTIMES_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${ThNB}_RND saving every ${SAVE_EVERY}  with is ParallelPerpComp = ${PARALLEL_PERP_COMP} is: $runtime seconds"  | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
 
 
 
-# process NYTIMES dataset with GammaPDB/vrd
-start=$(date +%s)
-${SCRIPTSDIR_ABS_PATH}/run_gammapdb_lda.sh --ldaVariant lda-inmemory-vrexpr --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS} --ParallelPerpComp ${PARALLEL_PERP_COMP}
-end=$(date +%s)
-runtime=$((end-start))
-echo "Time taken to run lda-inmemory-vrexpr  benchmark on NYTIMES_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${ThNB}_RND saving every ${SAVE_EVERY}  with is ParallelPerpComp = ${PARALLEL_PERP_COMP} is: $runtime seconds"  | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+
+
+# # process NYTIMES dataset with GammaPDB/vrd
+# start=$(date +%s)
+# ${SCRIPTSDIR_ABS_PATH}/run_gammapdb_lda.sh --ldaVariant lda-inmemory-vrexpr --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS} --ParallelPerpComp ${PARALLEL_PERP_COMP}
+# end=$(date +%s)
+# runtime=$((end-start))
+# echo "Time taken to run lda-inmemory-vrexpr  benchmark on NYTIMES_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${ThNB}_RND saving every ${SAVE_EVERY}  with is ParallelPerpComp = ${PARALLEL_PERP_COMP} is: $runtime seconds"  | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
 
 
 
-TotalEnd=$(date +%s)
-runtime=$((TotalEnd-TotalStart))
-echo "Benchmarking NYTIMES single threaded using gammapdb and mallet took $runtime seconds" | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
+# TotalEnd=$(date +%s)
+# runtime=$((TotalEnd-TotalStart))
+# echo "Benchmarking NYTIMES single threaded using gammapdb and mallet took $runtime seconds" | tee -a ${BENCHMARKSDIR_ABS_PATH}/logs/run_lda_benchmarks_exec_time.txt
 
 
-process NYTIMES dataset with GammaPDB/pc
-${SCRIPTSDIR_ABS_PATH}/run_gammapdb_lda.sh --ldaVariant lda-inmemory-pcexpr --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS}
+# process NYTIMES dataset with GammaPDB/pc
+# ${SCRIPTSDIR_ABS_PATH}/run_gammapdb_lda.sh --ldaVariant lda-inmemory-pcexpr --datasetName NYTIMES --numTopics ${NUM_TOPICS} --alpha ${ALPHA_PRIOR} --beta ${BETA_PRIOR} --numIterations ${NUM_ITERATIONS} --malletDir ${EXTRASDIR_ABS_PATH}/mallet/Mallet --outputDir ${BENCHMARKSDIR_ABS_PATH} --trainingSetDir ${DATADIR_ABS_PATH}/NYTIMES_train/mallet --testSetDir ${DATADIR_ABS_PATH}/NYTIMES_test/mallet  --saveEvery ${SAVE_EVERY} --rndSeed ${RND_SEED} --numThreads ${NUM_THREADS} --numRuns ${NUM_RUNS}
 
 
 

@@ -1,155 +1,126 @@
-<!-- gammapdb_arrow
-==============
+# StarfishDB with Stochastic Variational Inference
 
-`gammapdb_arrow` is a vectorized query execution engine designed for [Gamma Probabilistic Databases](http://dx.doi.org/10.48786/edbt.2022.14). 
-It is built on top of [Apache Arrow](https://arrow.apache.org) and [ClangJIT](https://github.com/hfinkel/llvm-project-cxxjit/wiki) ([paper](https://doi.ieeecomputersociety.org/10.1109/P3HPC49587.2019.00013)).
+This repository contains **StarfishDB**, a relational probabilistic programming query engine built on [Apache Arrow](https://arrow.apache.org) and [ClangJIT](https://github.com/hfinkel/llvm-project-cxxjit/wiki). StarfishDB supports two inference engines: Collapsed Gibbs Sampling (CGS, described in our [SIGMOD paper](https://dl.acm.org/doi/10.1145/3654988)) and Stochastic Variational Inference (SVI), added in this repository.
 
-In this repository we have provide the implementation of StarfishDB. StarfishDB is a relational probabilistic programming query engine.
-Internally, starfishDB supports the use of two inference engines: Collpased Gibbs Sampler and Stochastic Variational Inference.
-The version published here ([paper](https://dl.acm.org/doi/10.1145/3654988)). Consists of the Collpased Gibbs Sampler of starfishDB.
+The scripts below reproduce **Table 1** of the paper: the test log-likelihood of LDA trained with four approaches, evaluated at two timestamps T1 and T2.
 
-This implementation builds on top of the existing StarfishDB implementation to provide support for Stochastic Variational Inference.
+| Approach | Implementation |
+|---|---|
+| SFDB-SVI | StarfishDB, SVI engine (`build/gammapdb_arrow`) |
+| SFDB-CGS | StarfishDB, CGS engine (`build/gammapdb_arrow`) |
+| C++SVI | Standalone C++ SVI implementation (`cxx_svi/`) |
+| Mallet | [Mallet](https://github.com/mimno/Mallet) v202108 with `patches/mallet.patch` |
 
-In order to run the LDA experiments, please follow these steps:
-
-
-Create a docker container:
-sudo ./scripts/build_devenv_docker_img.sh
-sudo ./scripts/create_devenv_docker_cont.sh
- Run tmux to prevent disconnection issues: 
- tmux
-sudo docker exec -it starfishdb_dev_env_container_ec2-user863a3113 bash
- \textbf{Note:} The exact container name may vary. Replace with the appropriate name if different.
-
- Download the required dependencies:
-source scripts/get_deps.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_get_deps.txt
-
-Download and preprocess the required datasets:
-
-source scripts/get_uci_datasets .sh 2>&1 | tee ${LOGS_ABS_PATH}/log_get_uci_datasets.txt
-source scripts/get_wiki_dataset.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_get_wiki_dataset.txt
-
-
-Building starfishDB:
-cd build
-
-cmake3 -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER=`readlink -f ../libs/llvm-project-cxxjit/bin`/clang -DCMAKE_CXX_COMPILER=`readlink -f ../libs/llvm-project-cxxjit/bin`/clang++ ..  2>&1 | tee ${LOGS_ABS_PATH}/log_cmake3.txt
-
-ninja 2>&1 | tee ${LOGS_ABS_PATH}/log_ninja.txt
-
-#Run 50 topics experimets starfishDB-CGS
-source scripts/run_lda_benchmarksP50.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_lda_benchmarksP50.txt
-
-
-#Run 100 topics experimets starfishDB-CGS
-source scripts/run_lda_benchmarksP100.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_lda_benchmarksP100.txt
-
-#Run 200 topics experimets starfishDB-CGS
-source scripts/run_lda_benchmarksP200.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_lda_benchmarksP200.txt
-
-
-
-
-#Run 50 topics experimets starfishDB-SVI
-source scripts/run_vi_benchmark50.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_vi_benchmark50.txt
-
-
-#Run 100 topics experimets starfishDB-SVI
-source scripts/run_vi_benchmark100.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_vi_benchmark100.txt
-
-#Run 200 topics experimets starfishDB-SVI
-source scripts/run_vi_benchmark200.sh 2>&1 | tee ${LOGS_ABS_PATH}/log_run_vi_benchmark200.txt -->
-
-
-
-
-# gammapdb_arrow
-
-`gammapdb_arrow` is a vectorized query execution engine designed for [Gamma Probabilistic Databases](http://dx.doi.org/10.48786/edbt.2022.14). It is built on top of [Apache Arrow](https://arrow.apache.org) and [ClangJIT](https://github.com/hfinkel/llvm-project-cxxjit/wiki) ([paper](https://doi.ieeecomputersociety.org/10.1109/P3HPC49587.2019.00013)).
+Datasets: PubMed (100 topics) and Wikipedia (200 topics). All experiments use 24 threads.
 
 ---
 
-## Repository Overview
+## How Table 1 is computed
 
-This repository provides the implementation of **StarfishDB**, a relational probabilistic programming query engine. Internally, StarfishDB supports two inference engines:
+- Each run saves checkpoints during training. Every checkpoint is evaluated on the held-out test set with Mallet's evaluator.
+- The time of a checkpoint is the cumulative training time (evaluation excluded), averaged over the timing runs.
+- **T1** and **T2** are the two timestamps of the paper's Table 1, chosen in the same way as in the paper and computed from the reproduced runs.
 
-- **Collapsed Gibbs Sampling (CGS)**
-- **Stochastic Variational Inference (SVI)**
-
-The version published here corresponds to the CGS implementation described in our SIGMOD paper ([paper](https://dl.acm.org/doi/10.1145/3654988)). This fork extends the original implementation with full SVI support.
+T1 and T2 are measured from the runs themselves, so they depend on the machine.
 
 ---
 
-## Running the LDA Experiments
-
-Follow the steps below to build the development environment, fetch dependencies & datasets, compile the project, and run benchmarks.
-
-### 1  Create and Enter the Docker Development Container
+## 1. Create the container (on the host)
 
 ```bash
-# Build the image
 sudo ./scripts/build_devenv_docker_img.sh
-
-# Create the container
 sudo ./scripts/create_devenv_docker_cont.sh
+```
 
-# Attach via tmux (recommended to avoid disconnects)
+The second script prints the container name. The repository is mounted in the container at `/gammapdb_arrow`. The experiments run for several days, so start a `tmux` session first and open the container from it:
+
+```bash
 tmux
-sudo docker exec -it starfishdb_dev_env_container_ec2-user863a3113 bash
-# Note: The exact container name may vary.
+sudo docker exec -it <container name> bash
 ```
 
-### 2  Install Dependencies
+## 2. Run everything (in the container)
 
 ```bash
-source scripts/get_deps.sh 2>&1 | tee "logs/log_get_deps.txt"
+bash /gammapdb_arrow/scripts/main_script.sh
 ```
 
-### 3  Download & Preprocess Datasets
+`main_script.sh` runs the steps below in order and stops at the first failing step. The output of each step is saved to `logs/log_<script name>.txt`.
+
+| Step | Script (in `scripts/`) | What it does | Duration* |
+|---|---|---|---|
+| 1 | `get_deps.sh` | Downloads and builds LLVM ClangJIT and Apache Arrow; installs TeX Live | ~1 h |
+| 2 | `get_uci_datasets.sh` | Builds Mallet; downloads and preprocesses the UCI datasets (including PubMed) | ~2 h |
+| 3 | `get_wiki_dataset.sh` | Downloads and preprocesses the Wikipedia dataset | ~1.2 h |
+| 4 | `build_all.sh` | Builds StarfishDB (`build/`) and C++SVI (`cxx_svi/build/`) | |
+| 5 | `run_pubmed_sfdb_svi.sh` | PubMed: SFDB-SVI | < 10 h |
+| 6 | `run_pubmed_mallet_cgs.sh` | PubMed: Mallet, then SFDB-CGS | ~18 h |
+| 7 | `run_pubmed_cxx_svi.sh` | PubMed: C++SVI | ~7 h |
+| 8 | `run_wiki_sfdb_svi.sh` | Wikipedia: SFDB-SVI | ~12 h |
+| 9 | `run_wiki_mallet_cgs.sh` | Wikipedia: Mallet, then SFDB-CGS | ~31 h |
+| 10 | `run_wiki_cxx_svi.sh` | Wikipedia: C++SVI | ~14 h |
+| 11 | `make_loglik_table.py` | Computes T1, T2 and the log-likelihoods; prints Table 1 and the comparison with the paper | seconds |
+| 12 | `../report/make_latex_table.py` | Writes both tables to `report/loglik_tables.tex` and compiles `report/loglik_tables.pdf` | seconds |
+
+\*Measured on a machine with 64 cores and 503 GB of RAM. Durations include the evaluation of all checkpoints.
+
+Run only one experiment at a time: T1 and T2 are derived from measured running times.
+
+## 3. Run the steps individually (optional)
+
+The steps can also be run one by one from `/gammapdb_arrow`, in the order of the table above:
 
 ```bash
-source scripts/get_uci_datasets.sh 2>&1 | tee "logs/log_get_uci_datasets.txt"
-source scripts/get_wiki_dataset.sh 2>&1 | tee "logs/log_get_wiki_dataset.txt"
+source /opt/rh/devtoolset-11/enable
+export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux
+
+bash scripts/get_deps.sh            2>&1 | tee logs/log_get_deps.txt
+bash scripts/get_uci_datasets.sh    2>&1 | tee logs/log_get_uci_datasets.txt
+bash scripts/get_wiki_dataset.sh    2>&1 | tee logs/log_get_wiki_dataset.txt
+bash scripts/build_all.sh           2>&1 | tee logs/log_build_all.txt
+
+bash scripts/run_pubmed_sfdb_svi.sh   2>&1 | tee logs/log_run_pubmed_sfdb_svi.txt
+bash scripts/run_pubmed_mallet_cgs.sh 2>&1 | tee logs/log_run_pubmed_mallet_cgs.txt
+bash scripts/run_pubmed_cxx_svi.sh    2>&1 | tee logs/log_run_pubmed_cxx_svi.txt
+bash scripts/run_wiki_sfdb_svi.sh     2>&1 | tee logs/log_run_wiki_sfdb_svi.txt
+bash scripts/run_wiki_mallet_cgs.sh   2>&1 | tee logs/log_run_wiki_mallet_cgs.txt
+bash scripts/run_wiki_cxx_svi.sh      2>&1 | tee logs/log_run_wiki_cxx_svi.txt
+
+python3 scripts/make_loglik_table.py
+python3 report/make_latex_table.py
 ```
 
-### 4  Build StarfishDB
-
-```bash
-cd build
-cmake3 -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-  -DCMAKE_C_COMPILER="$(readlink -f ../libs/llvm-project-cxxjit/bin)/clang" \
-  -DCMAKE_CXX_COMPILER="$(readlink -f ../libs/llvm-project-cxxjit/bin)/clang++" \
-  .. 2>&1 | tee "log_cmake3.txt"
-
-ninja 2>&1 | tee "log_ninja.txt"
-```
-
-### 5  Run LDA Benchmarks
-
-#### Collapsed Gibbs Sampling (CGS)
-
-```bash
-# 50 topics
-source "scripts/run_lda_benchmarksP50.sh" 2>&1 | tee "logs/log_run_lda_benchmarksP50.txt"
-
-# 100 topics
-source "scripts/run_lda_benchmarksP100.sh" 2>&1 | tee "logs/log_run_lda_benchmarksP100.txt"
-
-# 200 topics
-source "scripts/run_lda_benchmarksP200.sh" 2>&1 | tee "logs/log_run_lda_benchmarksP200.txt"
-```
-
-#### Stochastic Variational Inference (SVI)
-
-```bash
-# 50 topics
-source "scripts/run_vi_benchmark50.sh" 2>&1 | tee "logs/log_run_vi_benchmark50.txt"
-
-# 100 topics
-source "scripts/run_vi_benchmark100.sh" 2>&1 | tee "logs/log_run_vi_benchmark100.txt"
-
-# 200 topics
-source "scripts/run_vi_benchmark200.sh" 2>&1 | tee "logs/log_run_vi_benchmark200.txt"
-```
+The parameters of each experiment are set at the top of its `run_*.sh` script.
 
 ---
+
+## Outputs
+
+| Location | Content |
+|---|---|
+| `benchmarks/csv/` | Per-run results: `*_loglik.csv` (log-likelihood per checkpoint), `*_perplexity.csv`, `*_time.csv` (training time per iteration and timing run), `*_plotdata.csv` (checkpoint times and perplexity) |
+| terminal / `logs/log_make_loglik_table.txt` | Table 1 (reproduced) and the comparison with the values reported in the paper |
+| `report/loglik_tables.pdf` | The same two tables, typeset |
+| `logs/` | Log of every step |
+
+`make_loglik_table.py` and `make_latex_table.py` can be re-run at any time; they expect exactly one run per approach and dataset in `benchmarks/csv/`.
+
+## Expected differences from the paper
+
+- T1 and T2 depend on the machine, so the reproduced timestamps might slightly differ from those in the paper, and the log-likelihoods read at those timestamps shift accordingly.
+- Small variations between runs are expected.
+
+---
+
+## Repository layout
+
+| Path | Content |
+|---|---|
+| `src/` | StarfishDB source code |
+| `cxx_svi/` | C++SVI source code |
+| `extras/` | Dataset preprocessing tools and other utilities; Mallet is installed in `extras/mallet/` |
+| `scripts/` | Setup, build and experiment scripts |
+| `scripts/legacy/` | Earlier experiment scripts, not used for Table 1 |
+| `report/` | LaTeX table generator and its output |
+| `conf/` | UCI dataset URLs, optional data directory redirect, TeX Live installation profile |
+| `patches/` | Patches applied to ClangJIT and Mallet |

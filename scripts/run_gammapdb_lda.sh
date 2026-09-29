@@ -211,7 +211,8 @@ rm -f ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR
 rm -f ${OUTPUT_DIR}/csv/${DATASET_NAME}_test_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_plotdata.csv
 rm -f ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_plotdata.csv
 
-
+# timing runs below append to the time file, so start from an empty one (as run_mallet.sh does)
+rm -f ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_time.csv
 
 echo "Profiling GammaPDB training performance..."
 for i in $(seq 1 ${NUM_RUNS})
@@ -354,3 +355,23 @@ python3 ${SCRIPTSDIR_ABS_PATH}/genplotdata.py --timingFile ${OUTPUT_DIR}/csv/${D
 
 # generating plot data for trainingset
 python3 ${SCRIPTSDIR_ABS_PATH}/genplotdata.py --timingFile ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_time.csv --perplexityFile ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_perplexity.csv --outFile ${OUTPUT_DIR}/csv/${DATASET_NAME}_train_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_plotdata.csv
+
+
+# ---- Remove THIS run's checkpoints + evaluators, only if its loglik CSVs are complete ----
+LL_FILE=${OUTPUT_DIR}/csv/${DATASET_NAME}_%s_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}_gammapdb_${LDA_VARIANT}_loglik.csv
+EXPECTED=$(( NUM_ITERATIONS / SAVE_EVERY ))
+COMPLETE=TRUE
+for split in test train; do
+  f=$(printf "$LL_FILE" $split)
+  rows=$(wc -l < "$f" 2>/dev/null || echo 0)
+  good=$(grep -cE '^[0-9]+,-?[0-9.]+([eE][-+]?[0-9]+)?$' "$f" 2>/dev/null || true)
+  if [ "$rows" != "$EXPECTED" ] || [ "$good" != "$EXPECTED" ]; then COMPLETE=FALSE; fi
+done
+if [ "$COMPLETE" == "TRUE" ]; then
+  echo "Loglik CSVs complete (${EXPECTED} checkpoints): removing this run's checkpoints and evaluators"
+  rm -f ${OUTPUT_DIR}/gammapdb_data/${LDA_VARIANT}/chain_states/chain-state_${DATASET_NAME}_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}.gz.* \
+        ${OUTPUT_DIR}/gammapdb_data/${LDA_VARIANT}/chain_states/chain-state_${DATASET_NAME}_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}.txt.* \
+        ${OUTPUT_DIR}/gammapdb_data/${LDA_VARIANT}/evaluators/evaluator_${DATASET_NAME}_${NUM_TOPICS}topics_A${ALPHA_PRIOR}_B${BETA_PRIOR}_NI${NUM_ITERATIONS}_NT${NUM_THREADS}_RND${RND_SEED}.*
+else
+  echo "WARNING: loglik CSVs incomplete or unexpected; keeping checkpoints and evaluators"
+fi

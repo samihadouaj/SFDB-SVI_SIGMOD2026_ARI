@@ -1,0 +1,1 @@
+cd ../build/ && make && cd ../scripts/ && ./run_svi_benchmark.sh 2>&1 | tee log.txt

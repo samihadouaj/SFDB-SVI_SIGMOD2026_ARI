@@ -109,17 +109,21 @@ ${CMAKECMD} -B ${BUILDDIR_ABS_PATH} -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -
 cd ${SCRIPTSDIR_ABS_PATH} 
 
 
-# 
-# # install tex compiler
-wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz --no-check-certificate
-zcat < install-tl-unx.tar.gz | tar xf -
-cd install-tl-*
-yum install perl-Digest-MD5 -y
-perl ./install-tl --profile=${CONFDIR_ABS_PATH}/texlive.profile
-export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux
-# echo 'export PATH=/usr/local/texlive/2024/bin/x86_64-linux:$PATH' >> ~/.bashrc
-# source ~/.bashr
-rm -rf ${SCRIPTSDIR_ABS_PATH}/install-tl-20240915
-rm -f ${SCRIPTSDIR_ABS_PATH}/install-tl-unx.tar.gz
+# Install TeX Live (pdflatex and the LaTeX packages used by report/make_latex_table.py), if necessary
+TEXLIVE_BIN=/usr/local/texlive/2024/bin/x86_64-linux
+if [ ! -x ${TEXLIVE_BIN}/pdflatex ]; then
+   cd ${SCRIPTSDIR_ABS_PATH}
+   rm -rf install-tl-*
+   wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz --no-check-certificate
+   zcat < install-tl-unx.tar.gz | tar xf -
+   cd install-tl-2*
+   yum install perl-Digest-MD5 -y
+   perl ./install-tl --profile=${CONFDIR_ABS_PATH}/texlive.profile
+   ${TEXLIVE_BIN}/tlmgr install booktabs multirow caption geometry
+   cd ${SCRIPTSDIR_ABS_PATH}
+   rm -rf install-tl-*
+else
+   echo "TeX Live is already installed. Nothing to do."
+fi
 
 cd ${SCRIPTSDIR_ABS_PATH} 
