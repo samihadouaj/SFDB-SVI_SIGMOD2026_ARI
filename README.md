@@ -1,6 +1,8 @@
 # StarfishDB with Stochastic Variational Inference
 
-This repository contains **StarfishDB**, a relational probabilistic programming query engine built on [Apache Arrow](https://arrow.apache.org) and [ClangJIT](https://github.com/hfinkel/llvm-project-cxxjit/wiki). StarfishDB supports two inference engines: Collapsed Gibbs Sampling (CGS, described in our [SIGMOD paper](https://dl.acm.org/doi/10.1145/3654988)) and Stochastic Variational Inference (SVI), added in this repository.
+This repository contains the code of the paper [*Variational Inference for De Finetti Logic*](https://dl.acm.org/doi/10.1145/3802114) and the scripts to reproduce its experiments.
+
+The code extends **StarfishDB**, a relational probabilistic programming query engine built on [Apache Arrow](https://arrow.apache.org) and [ClangJIT](https://github.com/hfinkel/llvm-project-cxxjit/wiki), whose Collapsed Gibbs Sampling (CGS) engine is described in our [SIGMOD paper](https://dl.acm.org/doi/10.1145/3654988), with a Stochastic Variational Inference (SVI) engine.
 
 The scripts below reproduce **Table 1** of the paper: the test log-likelihood of LDA trained with four approaches, evaluated at two timestamps T1 and T2.
 
@@ -12,16 +14,6 @@ The scripts below reproduce **Table 1** of the paper: the test log-likelihood of
 | Mallet | [Mallet](https://github.com/mimno/Mallet) v202108 with `patches/mallet.patch` |
 
 Datasets: PubMed (100 topics) and Wikipedia (200 topics). All experiments use 24 threads.
-
----
-
-## How Table 1 is computed
-
-- Each run saves checkpoints during training. Every checkpoint is evaluated on the held-out test set with Mallet's evaluator.
-- The time of a checkpoint is the cumulative training time (evaluation excluded), averaged over the timing runs.
-- **T1** and **T2** are the two timestamps of the paper's Table 1, chosen in the same way as in the paper and computed from the reproduced runs.
-
-T1 and T2 are measured from the runs themselves, so they depend on the machine.
 
 ---
 
@@ -62,7 +54,7 @@ bash /gammapdb_arrow/scripts/main_script.sh
 | 11 | `make_loglik_table.py` | Computes T1, T2 and the log-likelihoods; prints Table 1 and the comparison with the paper | seconds |
 | 12 | `../report/make_latex_table.py` | Writes both tables to `report/loglik_tables.tex` and compiles `report/loglik_tables.pdf` | seconds |
 
-\*Measured on a machine with 64 cores and 503 GB of RAM. Durations include the evaluation of all checkpoints.
+\*Measured on a machine with 2 × Intel Xeon E5-2683 v4 (32 cores, 64 hardware threads) and 503 GB of RAM. Durations include the evaluation of all checkpoints.
 
 Run only one experiment at a time: T1 and T2 are derived from measured running times.
 
@@ -90,7 +82,7 @@ python3 scripts/make_loglik_table.py
 python3 report/make_latex_table.py
 ```
 
-The parameters of each experiment are set at the top of its `run_*.sh` script.
+The parameters of each experiment are set in its `run_*.sh` script.
 
 ---
 
