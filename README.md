@@ -43,18 +43,18 @@ bash /gammapdb_arrow/scripts/main_script.sh
 |---|---|---|---|
 | 1 | `get_deps.sh` | Downloads and builds LLVM ClangJIT and Apache Arrow; installs TeX Live | ~1 h |
 | 2 | `get_uci_datasets.sh` | Builds Mallet; downloads and preprocesses the UCI datasets (including PubMed) | ~2 h |
-| 3 | `get_wiki_dataset.sh` | Downloads and preprocesses the Wikipedia dataset | ~1.2 h |
-| 4 | `build_all.sh` | Builds StarfishDB (`build/`) and C++SVI (`cxx_svi/build/`) | |
-| 5 | `run_pubmed_sfdb_svi.sh` | PubMed: SFDB-SVI | < 10 h |
+| 3 | `get_wiki_dataset.sh` | Downloads and preprocesses the Wikipedia dataset | ~1.4 h |
+| 4 | `build_all.sh` | Builds StarfishDB (`build/`) and C++SVI (`cxx_svi/build/`) | ~1 min |
+| 5 | `run_pubmed_sfdb_svi.sh` | PubMed: SFDB-SVI | ~7.5 h |
 | 6 | `run_pubmed_mallet_cgs.sh` | PubMed: Mallet, then SFDB-CGS | ~18 h |
 | 7 | `run_pubmed_cxx_svi.sh` | PubMed: C++SVI | ~7 h |
 | 8 | `run_wiki_sfdb_svi.sh` | Wikipedia: SFDB-SVI | ~12 h |
 | 9 | `run_wiki_mallet_cgs.sh` | Wikipedia: Mallet, then SFDB-CGS | ~31 h |
-| 10 | `run_wiki_cxx_svi.sh` | Wikipedia: C++SVI | ~14 h |
+| 10 | `run_wiki_cxx_svi.sh` | Wikipedia: C++SVI | ~14.5 h |
 | 11 | `make_loglik_table.py` | Computes T1, T2 and the log-likelihoods; prints Table 1 and the comparison with the paper | seconds |
 | 12 | `../report/make_latex_table.py` | Writes both tables to `report/loglik_tables.tex` and compiles `report/loglik_tables.pdf` | seconds |
 
-\*Measured on a machine with 2 × Intel Xeon E5-2683 v4 (32 cores, 64 hardware threads) and 503 GB of RAM. Durations include the evaluation of all checkpoints.
+\*Measured on a machine with 2 × Intel Xeon E5-2683 v4 (32 cores, 64 hardware threads) and 503 GB of RAM. Durations include the evaluation of all checkpoints. The whole pipeline took about 4 days.
 
 Run only one experiment at a time: T1 and T2 are derived from measured running times.
 
@@ -97,10 +97,23 @@ The parameters of each experiment are set in its `run_*.sh` script.
 
 `make_loglik_table.py` and `make_latex_table.py` can be re-run at any time; they expect exactly one run per approach and dataset in `benchmarks/csv/`.
 
-## Expected differences from the paper
+## Table 1 in the paper
 
-- T1 and T2 depend on the machine, so the reproduced timestamps might slightly differ from those in the paper, and the log-likelihoods read at those timestamps shift accordingly.
-- Small variations between runs are expected.
+| Dataset | Timestamp | SFDB-SVI | SFDB-CGS | C++SVI | Mallet |
+|---|---|---:|---:|---:|---:|
+| PubMed (100 topics) | T1 (773 s) | **−4.0673** | −4.0767 | −4.0685 | −4.0736 |
+| | T2 (971 s) | **−4.0664** | −4.0733 | −4.0679 | −4.0690 |
+| Wikipedia (200 topics) | T1 (1659 s) | **−5.5353** | −5.6240 | −5.6567 | −5.7077 |
+| | T2 (3281 s) | **−5.5362** | −5.6173 | −5.6099 | −5.6281 |
+
+Log-likelihood values are scaled by 10<sup>8</sup>. Higher is better.
+
+The reproduced table should support the same answers to the two questions Table 1 addresses in the paper:
+
+1. **Can a PPDL program generate an inference method that competes with a hard-coded implementation?** At both timestamps, the log-likelihoods of the models trained with StarfishDB (SFDB-SVI and SFDB-CGS) are largely comparable to those of the specialized tools (C++SVI and Mallet).
+2. **How does the new variational method compare with the Monte Carlo method of StarfishDB?** SFDB-SVI converges faster: its log-likelihood is essentially stable from T1 onward, while the Monte Carlo methods (SFDB-CGS and Mallet) keep improving between T1 and T2.
+
+The exact values, and T1 and T2 themselves, may differ slightly depending on the machine.
 
 ---
 
