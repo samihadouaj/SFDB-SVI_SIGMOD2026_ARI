@@ -17,19 +17,27 @@ Datasets: PubMed (100 topics) and Wikipedia (200 topics). All experiments use 24
 
 ---
 
+## Requirements
+
+Running the experiments requires a Linux machine with Docker, at least 24 hardware threads, around **1 TB of disk space** and around **500 GB of RAM**. The whole pipeline takes about 4 days.
+
+Reviewers who do not have such a machine can use [Chameleon Cloud](https://www.chameleoncloud.org) if they have access to it, or contact us to get access to our own server.
+
 ## 1. Create the container (on the host)
 
 ```bash
-sudo ./scripts/build_devenv_docker_img.sh
-sudo ./scripts/create_devenv_docker_cont.sh
+./scripts/build_devenv_docker_img.sh
+./scripts/create_devenv_docker_cont.sh
 ```
 
 The second script prints the container name. The repository is mounted in the container at `/gammapdb_arrow`. The experiments run for several days, so start a `tmux` session first and open the container from it:
 
 ```bash
 tmux
-sudo docker exec -it <container name> bash
+docker exec -it <container name> bash
 ```
+
+On our server (ada), the two scripts and `docker exec` must be run with `sudo`.
 
 ## 2. Run everything (in the container)
 
