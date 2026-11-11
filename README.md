@@ -19,9 +19,10 @@ Datasets: PubMed (100 topics) and Wikipedia (200 topics). All experiments use 24
 
 ## Requirements
 
-Running the experiments requires a Linux machine with Docker, at least 24 hardware threads, around **1 TB of disk space** and around **500 GB of RAM**. The whole pipeline takes about 4 days.
+Running the experiments requires a Linux machine with Docker, at least **24 physical cores**, **750 GB of disk space** and **500 GB of RAM**. The whole pipeline takes about 4 days on our lab server.
 
-Reviewers who do not have such a machine can use [Chameleon Cloud](https://www.chameleoncloud.org) if they have access to it, or contact us to get access to our own server.
+Reviewers who do not have a similar machine can use a bare-metal node on [Chameleon Cloud](https://www.chameleoncloud.org) (see [Acknowledgments](#acknowledgments)). We also ran the whole pipeline on a Chameleon node with 2 × Intel Xeon E5-2670 v3 (24 cores) and 512 GiB of RAM, where it took about 5 days. Instructions for reserving and setting up such a node are in [settingUpChameleon.md](settingUpChameleon.md).
+ Reviewers can also contact us to get access to our own lab server.
 
 ## 1. Create the container (on the host)
 
@@ -37,7 +38,7 @@ tmux
 docker exec -it <container name> bash
 ```
 
-On our server (ada), the two scripts and `docker exec` must be run with `sudo`.
+If your user is not in the `docker` group, run the two scripts and `docker exec` with `sudo`.
 
 ## 2. Run everything (in the container)
 
@@ -137,3 +138,11 @@ The exact values, and T1 and T2 themselves, may differ slightly depending on the
 | `report/` | LaTeX table generator and its output |
 | `conf/` | UCI dataset URLs, optional data directory redirect, TeX Live installation profile |
 | `patches/` | Patches applied to ClangJIT and Mallet |
+
+## Acknowledgments
+
+We used the Chameleon testbed to reproduce the experiments in the paper.
+
+Kate Keahey, Jason Anderson, Zhuo Zhen, Pierre Riteau, Paul Ruth, Dan Stanzione, Mert Cevik, Jacob Colleran, Haryadi S. Gunawi, Cody Hammock, Joe Mambretti, Alexander Barnes, François Halbach, Alex Rocha and Joe Stubbs. "Lessons Learned from the Chameleon Testbed". In *Proceedings of the 2020 USENIX Annual Technical Conference (USENIX ATC '20)*. USENIX Association. July 2020.
+
+
