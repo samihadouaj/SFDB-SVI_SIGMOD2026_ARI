@@ -96,6 +96,8 @@ openstack server create \
   <server_name>
 ```
 
+`<server_name>` is any name you choose for the instance; later commands refer to it by this name.
+
 Wait for **ACTIVE** (10 to 15 minutes; BUILD is normal):
 
 ```bash
@@ -136,7 +138,7 @@ lsblk -o NAME,SIZE,TYPE,ROTA,MODEL,FSTYPE,MOUNTPOINT   # disks; ROTA=0 means SSD
 df -h /               # free space on the root disk
 ```
 
-Choose a directory with at least 750 GB free for the repository and the Docker data (called `<data_dir>` below). If `/` has enough space, any directory on it works. Otherwise, format and mount an unused large disk (e.g. at `/mnt/data`) and use that. If the node itself looks broken, open a ticket at the Chameleon Help Desk.
+Choose a directory with at least 750 GB free for the repository and the Docker data (called `<data_dir>` below). If `/` has enough space, any directory on it works. Otherwise, format and mount an unused large disk (e.g. at `/mnt/data`) and use that.
 
 ## 8. Install Docker
 
