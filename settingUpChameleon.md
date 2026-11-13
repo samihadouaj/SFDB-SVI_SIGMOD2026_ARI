@@ -55,7 +55,7 @@ openstack keypair create --public-key ~/.ssh/id_ed25519.pub <key_name>
 
 A lease reserves hardware for a time window. Dates are in **UTC**; omitting `--start-date` starts it now.
 
-Make sure the node type you request has at least **750 GB of disk space, 500 GB of RAM and 24 physical cores**.
+Make sure the node type you request has at least **750 GB of disk space, 512 GB of RAM and 24 CPU cores**.
 
 Reserve any node of a given type (e.g. `storage_hierarchy`: 512 GiB RAM, large disks):
 

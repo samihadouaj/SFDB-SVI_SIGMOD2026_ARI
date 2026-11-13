@@ -19,10 +19,9 @@ Datasets: PubMed (100 topics) and Wikipedia (200 topics). All experiments use 24
 
 ## Requirements
 
-Running the experiments requires a Linux machine with Docker, at least **24 physical cores**, **750 GB of disk space** and **500 GB of RAM**. The whole pipeline takes about 4 days on our lab server.
+Running the experiments requires a Linux machine with Docker, at least **24 CPU cores**, **750 GB of disk space** and **512 GB of RAM**. The whole pipeline takes about 4 days on our lab server.
 
-Reviewers who do not have a similar machine can use a bare-metal node on [Chameleon Cloud](https://www.chameleoncloud.org) (see [Acknowledgments](#acknowledgments)). We also ran the whole pipeline on a Chameleon node with 2 × Intel Xeon E5-2670 v3 (24 cores) and 512 GiB of RAM, where it took about 5 days. Instructions for reserving and setting up such a node are in [settingUpChameleon.md](settingUpChameleon.md).
- Reviewers can also contact us to get access to our own lab server.
+Reviewers who do not have a similar machine can use a bare-metal node on [Chameleon Cloud](https://www.chameleoncloud.org) (see [Acknowledgments](#acknowledgments)). We also reproduced Table 1 on a Chameleon node with 2 × Intel Xeon E5-2670 v3 (24 cores) and 512 GiB of RAM, where it took about 5 days. Instructions for reserving and setting up such a node are in [settingUpChameleon.md](settingUpChameleon.md). Reviewers can also contact us to get access to our own lab server.
 
 ## 1. Create the container (on the host)
 
@@ -63,7 +62,7 @@ bash /gammapdb_arrow/scripts/main_script.sh
 | 11 | `make_loglik_table.py` | Computes T1, T2 and the log-likelihoods; prints Table 1 and the comparison with the paper | seconds |
 | 12 | `../report/make_latex_table.py` | Writes both tables to `report/loglik_tables.tex` and compiles `report/loglik_tables.pdf` | seconds |
 
-\*Measured on a machine with 2 × Intel Xeon E5-2683 v4 (32 cores, 64 hardware threads) and 503 GB of RAM. Durations include the evaluation of all checkpoints. The whole pipeline took about 4 days.
+\*Measured on our lab server (2 × Intel Xeon E5-2683 v4, 32 cores, 64 hardware threads, 503 GB of RAM). Durations include the evaluation of all checkpoints. The whole pipeline took about 4 days.
 
 Run only one experiment at a time: T1 and T2 are derived from measured running times.
 
@@ -120,9 +119,9 @@ Log-likelihood values are scaled by 10<sup>8</sup>. Higher is better.
 The reproduced table should support the same answers to the two questions Table 1 addresses in the paper:
 
 1. **Can a PPDL program generate an inference method that competes with a hard-coded implementation?** At both timestamps, the log-likelihoods of the models trained with StarfishDB (SFDB-SVI and SFDB-CGS) are largely comparable to those of the specialized tools (C++SVI and Mallet).
-2. **How does the new variational method compare with the Monte Carlo method of StarfishDB?** SFDB-SVI converges faster: its log-likelihood is essentially stable from T1 onward, while the Monte Carlo methods (SFDB-CGS and Mallet) keep improving between T1 and T2.
+2. **How does the new variational method compare with the Monte Carlo method of StarfishDB?** SFDB-SVI converges faster: its log-likelihood is essentially stable from T1 onward, while the Monte Carlo methods (SFDB-CGS and Mallet) keep improving after T1.
 
-The exact values, and T1 and T2 themselves, may differ slightly depending on the machine.
+We successfully reproduced Table 1 on two different machines: our lab server and a Chameleon node. Both reproductions support the same answers to the two questions above. The exact values, and T1 and T2 themselves, may differ slightly depending on the machine.
 
 ---
 
@@ -141,7 +140,7 @@ The exact values, and T1 and T2 themselves, may differ slightly depending on the
 
 ## Acknowledgments
 
-We used the Chameleon testbed to reproduce the experiments in the paper.
+We used the Chameleon testbed for one of our two reproductions of the experiments.
 
 Kate Keahey, Jason Anderson, Zhuo Zhen, Pierre Riteau, Paul Ruth, Dan Stanzione, Mert Cevik, Jacob Colleran, Haryadi S. Gunawi, Cody Hammock, Joe Mambretti, Alexander Barnes, François Halbach, Alex Rocha and Joe Stubbs. "Lessons Learned from the Chameleon Testbed". In *Proceedings of the 2020 USENIX Annual Technical Conference (USENIX ATC '20)*. USENIX Association. July 2020.
 
